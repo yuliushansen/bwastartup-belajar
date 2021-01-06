@@ -6,7 +6,6 @@ import (
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/user"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -29,29 +28,13 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	campaignRepository := campaign.NewRepository(db)
-	campaigns, err := campaignRepository.FindByUserID(9)
-
-	if err != nil {
-		fmt.Println("DEBUG")
-		fmt.Println("DEBUG")
-		fmt.Println("DEBUG")
-		return
-	}
-
-	fmt.Println(len(campaigns))
-
-	for _, campaign := range campaigns {
-		fmt.Println(campaign.Name)
-		if len(campaign.CampaignImages) > 0 {
-			fmt.Println(campaign.CampaignImages[0].FileName)
-		}
-	}
 
 	userService := user.NewService(userRepository)
 	campaignService := campaign.NewService(campaignRepository)
 
 	authSevice := auth.NewService()
 	userHandler := handler.NewUserHandler(userService, authSevice)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	router := gin.Default()
 
@@ -62,6 +45,7 @@ func main() {
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authSevice, userService), userHandler.UploadAvatar)
 	api.GET("/users/fetch", authMiddleware(authSevice, userService), userHandler.FetchUser)
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 
 	router.Run()
 }
