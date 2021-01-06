@@ -48,6 +48,8 @@ func main() {
 	}
 
 	userService := user.NewService(userRepository)
+	campaignService := campaign.NewService(campaignRepository)
+
 	authSevice := auth.NewService()
 	userHandler := handler.NewUserHandler(userService, authSevice)
 
