@@ -48,6 +48,7 @@ func main() {
 	api.GET("/users/fetch", authMiddleware(authSevice, userService), userHandler.FetchUser)
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
+	api.POST("/campaigns", authMiddleware(authSevice, userService), campaignHandler.CreateCampaign)
 
 	router.Run()
 }
